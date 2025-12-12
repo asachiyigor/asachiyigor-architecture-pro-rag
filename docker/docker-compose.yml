@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  rag-bot:
+    build: .
+    container_name: rag-bot
+    volumes:
+      - ./knowledge_base:/app/knowledge_base
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - .env
+    # restart: unless-stopped  # Отключено для однократного выполнения демо
+    command: python src/rag_bot.py

@@ -1,0 +1,121 @@
+@startuml RAG Index Update Architecture
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam rectangle {
+    BackgroundColor<<source>> #E3F2FD
+    BackgroundColor<<process>> #FFF3E0
+    BackgroundColor<<storage>> #E8F5E9
+    BackgroundColor<<output>> #F3E5F5
+    BorderColor #666666
+}
+
+title RAG Knowledge Base - Automatic Update Architecture
+
+rectangle "Knowledge Base Sources" <<source>> {
+    file "New Documents\n(.md files)" as newdocs
+    folder "knowledge_base/updates/" as updates
+    newdocs --> updates : Place files
+}
+
+rectangle "Scheduler" <<process>> {
+    agent "Cron (Linux/macOS)\nor\nTask Scheduler (Windows)" as cron
+    note right of cron
+        Runs daily at 6:00 AM
+        Trigger: 0 6 * * *
+    end note
+}
+
+rectangle "Update Process" <<process>> {
+    agent "update_index.py" as script
+
+    rectangle "Step 1: Scan" as scan {
+        agent "Scan for\nnew files" as scan_files
+    }
+
+    rectangle "Step 2: Process" as process {
+        agent "Read file\ncontent" as read
+        agent "Create chunks\n(500 tokens)" as chunk
+        agent "Generate\nembeddings" as embed
+    }
+
+    rectangle "Step 3: Update" as update {
+        agent "Load current\nindex" as load
+        agent "Merge\nembeddings" as merge
+        agent "Save updated\nindex" as save
+    }
+}
+
+rectangle "Storage" <<storage>> {
+    database "Vector Index" as index {
+        file "embeddings.npy" as emb
+        file "chunks_metadata.pkl" as meta
+        file "index_config.json" as config
+    }
+}
+
+rectangle "Outputs" <<output>> {
+    file "logs/index_update.log" as log
+    agent "RAG Bot API" as api
+}
+
+' Flow connections
+updates --> cron : Trigger\n(daily)
+cron --> script : Execute
+
+script --> scan_files
+scan_files --> read : New files found
+read --> chunk
+chunk --> embed
+
+embed --> load
+load --> merge : New embeddings
+merge --> save
+
+save --> emb : Update
+save --> meta : Update
+save --> config : Update
+
+script --> log : Write logs
+
+emb --> api : Use for\nsemantic search
+meta --> api
+config --> api
+
+' Example data flows
+note bottom of emb
+    NumPy array of
+    384-dimensional vectors
+    Shape: (N_chunks, 384)
+end note
+
+note bottom of meta
+    List of dictionaries:
+    - text
+    - source_file
+    - chunk_id
+    - title
+    - word_count
+end note
+
+note bottom of config
+    {
+      "num_chunks": 860,
+      "num_documents": 35,
+      "last_updated": "2025-12-12T06:00:03",
+      "added_files": 3,
+      "added_chunks": 15
+    }
+end note
+
+note bottom of log
+    2025-12-12 06:00:03 - INFO
+    Index update completed!
+    Time: 2.34s
+    New files: 3, chunks: 15
+    Total: 860 chunks, 35 docs
+    Errors: 0
+end note
+
+@enduml

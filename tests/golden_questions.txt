@@ -1,0 +1,51 @@
+# Golden Questions Set for RAG Bot Testing
+
+## Known Topics (Should Answer - 8 questions)
+
+1. What is Synth Flux?
+   Expected: Explanation of energy field, Synth Harmony vs Void Corruption
+
+2. Who is Xarn Velgor?
+   Expected: VoidLord, formerly Kael Brightwing, fell to Void Corruption
+
+3. What is a Photon Blade?
+   Expected: Weapon of SynthKeepers and VoidLords, plasma beam, construction process
+
+4. What is the Stellar Hawk?
+   Expected: Modified freighter, captained by Dax Corvain, fastest ship
+
+5. Who leads the Resistance Coalition?
+   Expected: Sera Veylan, former Senator
+
+6. What was the Battle of Verdantis?
+   Expected: Decisive battle, destruction of Void Core Station
+
+7. What is the Void Core Station?
+   Expected: Massive battle station, planet-destroying weapon
+
+8. Who is Supreme Archon Malakor?
+   Expected: Ruler of Dominion Hegemony, most powerful VoidLord
+
+## Missing/Unknown Topics (Should Say "Don't Know" - 5 questions)
+
+1. What is the economic system of QuantumVerse?
+   Expected: Not enough detail in knowledge base
+
+2. How does interstellar trade work?
+   Expected: Limited information available
+
+3. What religions exist in QuantumVerse?
+   Expected: Not covered in knowledge base
+
+4. What is the history of Synth Flux creation?
+   Expected: Origin not explained
+
+5. How do quantum tunneling drives work in detail?
+   Expected: Basic explanation exists but not detailed mechanics
+
+## Quality Metrics
+
+- Precision: % of returned results that are relevant
+- Recall: % of relevant documents that are retrieved
+- Response Time: Average time to answer
+- Coverage: % of golden questions answered correctly
