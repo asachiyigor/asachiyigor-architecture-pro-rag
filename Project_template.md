@@ -240,10 +240,14 @@ QuantumForge Software — финско-эстонская продуктовая
 - **Метаданные:** source_file, chunk_id, title
 
 ### Статистика индекса
-- **Количество документов:** TBD
-- **Количество чанков:** TBD
-- **Время генерации:** TBD
-- **Размер индекса:** TBD
+- **Количество документов:** 34 файлов
+- **Количество чанков:** 34 чанков
+- **Время генерации:** ~0.05 секунд (инкрементальное обновление)
+- **Размер индекса:** 52 KB (embeddings.npy)
+- **Модель:** sentence-transformers/all-MiniLM-L6-v2
+- **Размерность эмбеддингов:** 384 dimensions
+- **Дата создания:** 2025-12-12
+- **Последнее обновление:** 2025-12-12
 
 ---
 
@@ -284,7 +288,42 @@ System: Ты - ассистент базы знаний QuantumForge Software.
 ```
 
 ### Интерфейс
-Реализован через **FastAPI REST API** с endpoint `/query`
+
+**Основной интерфейс:** Telegram Bot (`src/telegram_bot.py`)
+
+**Доступные методы:**
+
+1. **Консольная версия** - для тестирования и демонстрации:
+```bash
+python src/rag_bot.py
+```
+
+2. **Telegram Bot** - основной интерфейс для пользователей:
+```bash
+# Установить токен в .env
+echo "TELEGRAM_BOT_TOKEN=your_token" >> .env
+
+# Запустить бота
+python src/telegram_bot.py
+```
+
+**Команды Telegram бота:**
+- `/start` - Начать работу с ботом
+- `/help` - Справка по использованию
+- `/about` - Информация о боте
+- Любой текстовый вопрос - получить ответ из базы знаний
+
+**Пример использования через Python API:**
+```python
+from src.rag_bot import RAGBot
+
+bot = RAGBot()
+result = bot.answer_query("What is Magical Power?")
+print(result["answer"])
+print(result["sources"])
+```
+
+Подробная документация по использованию бота: [README.md](README.md)
 
 ---
 
@@ -304,43 +343,80 @@ System: Ты - ассистент базы знаний QuantumForge Software.
 **Примечание:** Используются актуальные термины из базы знаний (см. [TERMS_REFERENCE.md](TERMS_REFERENCE.md)).
 
 1. **Q:** "What is Magical Power?"
-   **A:** См. [screenshots/01_magical_power_success.png](screenshots/01_magical_power_success.png)
+
+   **A:** Magical Power is an energy field that permeates the entire Russian Fairy Tale Realm universe. It binds together all living things and gives Bogatyrs their extraordinary abilities...
+
+   **Sources:** `01_magical_power_overview.md`, `29_advanced_magical_power_abilities.md`
+
+   **Скриншот:** [screenshots/01_magical_power_success.png](screenshots/01_magical_power_success.png)
 
 2. **Q:** "Who is Koschei the Deathless?"
-   **A:** См. [screenshots/02_koschei_success.png](screenshots/02_koschei_success.png)
+
+   **A:** Koschei the Deathless is one of the most feared Dark Sorcerers in the history of the Russian Fairy Tale Realm. Once known as Ivan the Bright, he was a promising Young Bogatyr before falling to the Black Magic...
+
+   **Sources:** `02_koschei_the_deathless.md`, `33_test_new_character.md`
+
+   **Скриншот:** [screenshots/02_koschei_success.png](screenshots/02_koschei_success.png)
 
 3. **Q:** "Tell me about Magic Sword"
-   **A:** См. [screenshots/03_magic_sword_success.png](screenshots/03_magic_sword_success.png)
+
+   **A:** The Magic Sword is the signature weapon of both Bogatyrs and Dark Sorcerers. It consists of a plasma beam contained within an electromagnetic field, creating a blade capable of cutting through almost anything...
+
+   **Sources:** `03_magic_sword.md`, `01_magical_power_overview.md`
+
+   **Скриншот:** [screenshots/03_magic_sword_success.png](screenshots/03_magic_sword_success.png)
 
 4. **Q:** "What is Flying Ship?"
-   **A:** См. [screenshots/04_flying_ship_success.png](screenshots/04_flying_ship_success.png)
+
+   **A:** The Flying Ship is a modified VCX-100 light freighter, famous as "the ship that made the Kessel Run in less than twelve parsecs"...
+
+   **Sources:** `05_flying_ship.md`, `19_flying_carpet_fighter.md`
+
+   **Скриншот:** [screenshots/04_flying_ship_success.png](screenshots/04_flying_ship_success.png)
 
 5. **Q:** "Who leads the Alliance of Heroes?"
-   **A:** См. [screenshots/05_alliance_leaders_success.png](screenshots/05_alliance_leaders_success.png)
+
+   **A:** The Alliance of Heroes is a military organization dedicated to restoring freedom to the Russian Fairy Tale Realm and defeating the Dark Kingdom...
+
+   **Sources:** `06_alliance_of_heroes.md`, `30_alliance_of_heroes_vehicles.md`
+
+   **Скриншот:** [screenshots/05_alliance_leaders_success.png](screenshots/05_alliance_leaders_success.png)
 
 #### "Не знаю" ответы (5 примеров)
 
 Бот должен честно отвечать "I don't know" на вопросы вне базы знаний.
 
 1. **Q:** "What is weather on Earth?"
+
    **A:** "I don't know. This information is not available in the knowledge base."
-   См. [screenshots/06_weather_dont_know.png](screenshots/06_weather_dont_know.png)
+
+   **Скриншот:** [screenshots/06_weather_dont_know.png](screenshots/06_weather_dont_know.png)
 
 2. **Q:** "How much Bitcoin?"
-   **A:** "I don't know..."
-   См. [screenshots/07_bitcoin_dont_know.png](screenshots/07_bitcoin_dont_know.png)
+
+   **A:** "I don't know. This information is not available in the knowledge base."
+
+   **Скриншот:** [screenshots/07_bitcoin_dont_know.png](screenshots/07_bitcoin_dont_know.png)
 
 3. **Q:** "Who won election?"
-   **A:** "I don't know..."
-   См. [screenshots/08_election_dont_know.png](screenshots/08_election_dont_know.png)
+
+   **A:** "I don't know. This information is not available in the knowledge base."
+
+   **Скриншот:** [screenshots/08_election_dont_know.png](screenshots/08_election_dont_know.png)
 
 4. **Q:** "What is Python programming?"
-   **A:** "I don't know..."
-   См. [screenshots/09_python_dont_know.png](screenshots/09_python_dont_know.png)
+
+   **A:** "I don't know. This information is not available in the knowledge base."
+
+   **Скриншот:** [screenshots/09_python_dont_know.png](screenshots/09_python_dont_know.png)
 
 5. **Q:** "Tell me about quantum physics"
+
    **A:** "I don't know. This information is not available in the knowledge base."
-   См. [screenshots/10_quantum_dont_know.png](screenshots/10_quantum_dont_know.png)
+
+   **Скриншот:** [screenshots/10_quantum_dont_know.png](screenshots/10_quantum_dont_know.png)
+
+**Вывод:** Бот корректно определяет вопросы вне базы знаний и честно отвечает "I don't know" вместо придумывания информации. Это подтверждает правильную работу Chain-of-Thought промптинга и защиты от галлюцинаций.
 
 ---
 
